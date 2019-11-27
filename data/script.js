@@ -26,8 +26,134 @@ $(window).on('load', function()
 		}
 	});
 
+	$.ajax({
+		url: "/ajax/get_data.php",
+		success: function(data)
+		{
+			let db = processData(JSON.parse(data));
+
+			$("#maintab").html(getTableHTML(db));
+
+			return data;
+		}
+	});
+
 
 });
+
+function processData(data)
+{
+	let db = [];
+
+	let author_map = {};
+	let series_map = {};
+
+	for (const author of data['authors'])
+	{
+		let aobj =
+		{
+			'id': Number(author['id']),
+			'name': author['name'],
+			'all_books': [],
+			'direct_books': [],
+			'series': [],
+			'audiolength': 0,
+			'filesize': 0,
+			'filecount': 0
+		};
+
+		db.push(aobj);
+		author_map[aobj.id] = aobj;
+	}
+
+	for (const series of data['series'])
+	{
+		let sobj =
+		{
+			'id': Number(series['id']),
+			'title': series['title'],
+			'books': {},
+			'audiolength': 0,
+			'filesize': 0,
+			'filecount': 0
+		};
+		const author = author_map[Number(series['author_id'])];
+
+		author.series.push(sobj);
+		series_map[sobj.id] = sobj;
+	}
+
+	for (const book of data['books'])
+	{
+		let bobj =
+		{
+			'id': Number(book['id']),
+			'title': book['title'],
+			'audiolength': Number(book['audiolength']),
+			'filesize': Number(book['filesize']),
+			'filecount': Number(book['filecount']),
+		};
+
+		const author = author_map[Number(book['author_id'])];
+		author.all_books.push(bobj);
+
+		if (book['series_id'] !== null)
+		{
+			const series = series_map[Number(book['series_id'])];
+
+			series.books[Number(book['series_index'])] = book;
+
+			series.audiolength += bobj.audiolength;
+			series.filesize    += bobj.filesize;
+			series.filecount   += bobj.filecount;
+		}
+		else
+		{
+			author.direct_books.push(bobj);
+		}
+
+		author.audiolength += bobj.audiolength;
+		author.filesize    += bobj.filesize;
+		author.filecount   += bobj.filecount;
+	}
+
+	return db;
+}
+
+function getTableHTML(db)
+{
+	let str = "";
+
+	str += '<thead>';
+	str += '<tr>';
+	str += '<th style="width: 600px">Name</th>';
+	str += '<th style="width: 100px">Book count</th>';
+	str += '<th style="width: 200px">Length</th>';
+	str += '<th style="width: 80px">Size</th>';
+	str += '<th style="width: 100px">File count</th>';
+	str += '</tr>';
+	str += '</thead>';
+
+	str += '<tbody>';
+
+	let rowid = 100000;
+	for (const author of db)
+	{
+		str += '<tr class="row_entry row_author row_id_'+rowid+'" data-epath="['+rowid+']" data-rowid="'+rowid+'" data-eparent="" data-authorid="'+author.id+'">';
+		str += '<td>' + author.name + '</td>';
+		str += '<td>' + author.all_books.length + '</td>';
+		str += '<td title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
+		str += '<td title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
+		str += '<td>' + author.filecount + '</td>';
+		str += '</tr>';
+
+		rowid++;
+	}
+	str += '</tbody>';
+
+
+	return str;
+}
 
 function formatLength(secs) {
 	let res = ""; //$NON-NLS-1$
@@ -79,18 +205,6 @@ function formatLength(secs) {
 
 	return res;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 function formatSize(bytes) {
 	let UNITS = ["B", "KB","MB","GB","TB","PB","EB"];

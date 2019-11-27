@@ -4,7 +4,7 @@ require_once (__DIR__ . '/../model/Base.php');
 
 $db = Database::connect();
 
-$data = $db->sql_query_assoc(file_get_contents('../data/info.sql'));
+$data = $db->sql_query_assoc(file_get_contents('../sql/info.sql'));
 
 $json = [];
 

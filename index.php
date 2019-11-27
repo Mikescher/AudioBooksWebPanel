@@ -3,8 +3,11 @@
 
 <head>
 	<meta charset="utf-8">
+    <meta name="robots" content="noindex">
 	<title>AudioBooks - Webview</title>
 	<link rel="icon" type="image/png" href="/data/icon.png"/>
+
+    <link rel="stylesheet" type="text/css" href="/data/pure-min.css"/>
     <link rel="stylesheet" href="/data/styles.css"/>
 </head>
 <body>
@@ -16,14 +19,14 @@
 
         <div id="header">
             <div id="headertext"><img src="/data/icon.png" /><span>Audiobooks</span></div>
-            <input type="text" class="filter" placeholder="Search" >
+            <input type="text" class="filter" placeholder="Filter" >
         </div>
 
         <div id="content">
-            <table id="loglistcontent" class="filetab pure-table pure-table-bordered">
+            <table id="maintab" class="pure-table pure-table-bordered">
                 <!-- filled via js -->
             </table>
-        </div>  
+        </div>
 
         <div id="pagefooter" class="">
             <div class="FooterInfo">Script:<span id="InfoCommit">?</span></div>
