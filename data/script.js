@@ -151,7 +151,7 @@ function getTableHTML(db)
 		rowid++;
 		const rid_author = rowid;
 		str += '<tr class="row_entry row_expandable row_author row_id_'+rowid+'" onclick="rowclick('+rowid+')" data-epath="['+rowid+']" data-rowid="'+rowid+'" data-eparent="" data-authorid="'+author.id+'">';
-		str += '<td>' + author.name + '</td>';
+		str += '<td class="td_name"><i class="fas fa-user"></i>' + author.name + '</td>';
 		str += '<td>' + author.all_books.length + '</td>';
 		str += '<td title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
 		str += '<td title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
@@ -162,7 +162,7 @@ function getTableHTML(db)
 		{
 			rowid++;
 			str += '<tr class="row_entry row_nonexpandable row_book row_directbook row_id_'+rowid+' row_collapsed" onclick="rowclick('+rowid+')" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-bookid="'+book.id+'">';
-			str += '<td>' + book.title + '</td>';
+			str += '<td class="td_name"><i class="fas fa-book"></i>' + book.title + '</td>';
 			str += '<td></td>';
 			str += '<td title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
 			str += '<td title="'+book.filesize+' bytes">' + formatSize(book.filesize) + '</td>';
@@ -175,7 +175,7 @@ function getTableHTML(db)
 			rowid++;
 			const rid_series = rowid;
 			str += '<tr class="row_entry row_expandable row_series row_id_'+rowid+' row_collapsed" onclick="rowclick('+rowid+')" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-seriesid="'+series.id+'">';
-			str += '<td>' + series.title + '</td>';
+			str += '<td class="td_name"><i class="fas fa-list-alt"></i>' + series.title + '</td>';
 			str += '<td>' + series.bookcount + '</td>';
 			str += '<td title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
 			str += '<td title="'+series.filesize+' bytes">' + formatSize(series.filesize) + '</td>';
@@ -186,7 +186,7 @@ function getTableHTML(db)
 			{
 				rowid++;
 				str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' row_collapsed" onclick="rowclick('+rowid+')" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
-				str += '<td><span class="book_num">' + booknum + '</span>' + sbook.title + '</td>';
+				str += '<td class="td_name"><div><i class="fas fa-book"></i><span class="book_num"><span>' + booknum + '</span></span>' + sbook.title + '</div></td>';
 				str += '<td></td>';
 				str += '<td title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
 				str += '<td title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';

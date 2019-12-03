@@ -8,8 +8,12 @@
 	<link rel="icon" type="image/png" href="/data/icon.png"/>
 
     <link rel="stylesheet" type="text/css" href="/data/pure-min.css"/>
-    <link rel="stylesheet" href="/data/styles.css"/>
     <link rel="stylesheet" href="/data/spin.css"/>
+
+    <link rel="stylesheet" href="/data/fa-solid.css">
+    <link rel="stylesheet" href="/data/fontawesome.css">
+
+    <link rel="stylesheet" href="/data/styles.css"/>
 </head>
 <body>
 

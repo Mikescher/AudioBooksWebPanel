@@ -247,3 +247,37 @@ body {
 
 
 
+
+.td_name .fas {
+    margin-right: 0.5em;
+}
+
+.td_name div {
+    display: flex;
+    flex-direction: row;
+}
+
+.td_name div .book_num {
+    background: #888;
+    color: #FFF;
+    border-radius: 4px;
+    margin-right: 0.5em;
+
+    min-width: 2.5em;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.td_name div .book_num span {
+    font-size: 0.8em;
+}
+
+.row_author .td_name     { padding-left: 1em; }
+.row_directbook .td_name { padding-left: 2em; }
+.row_series .td_name     { padding-left: 2em; }
+.row_seriesbook .td_name { padding-left: 3em; }
+
+
