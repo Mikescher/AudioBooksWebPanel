@@ -168,11 +168,11 @@ function getTableHTML(db)
 
 	str += '<thead>';
 	str += '<tr>';
-	str += '<th style="width: 600px">Name</th>';
-	str += '<th style="width: 100px">Book count</th>';
-	str += '<th style="width: 200px">Length</th>';
-	str += '<th style="width: 80px">Size</th>';
-	str += '<th style="width: 100px">File count</th>';
+	str += '<th class="th_name"  >Name</th>';
+	str += '<th class="th_bcount">Book count</th>';
+	str += '<th class="th_length">Length</th>';
+	str += '<th class="th_size"  >Size</th>';
+	str += '<th class="th_fcount">File count</th>';
 	str += '</tr>';
 	str += '</thead>';
 
@@ -185,10 +185,10 @@ function getTableHTML(db)
 		const rid_author = rowid;
 		str += '<tr class="row_entry row_expandable row_author row_id_'+rowid+'" onclick="rowclick('+rowid+');" data-epath="['+rowid+']" data-rowid="'+rowid+'" data-eparent="" data-authorid="'+author.id+'">';
 		str += '<td class="td_name"><i class="fas fa-user"></i>' + author.name + '</td>';
-		str += '<td>' + author.all_books.length + '</td>';
-		str += '<td title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
-		str += '<td title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
-		str += '<td>' + author.filecount + '</td>';
+		str += '<td class="td_bcount">' + author.all_books.length + '</td>';
+		str += '<td class="td_length" title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
+		str += '<td class="td_size"   title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
+		str += '<td class="td_fcount">' + author.filecount + '</td>';
 		str += '</tr>';
 
 		for (const book of author.direct_books)
@@ -196,10 +196,10 @@ function getTableHTML(db)
 			rowid++;
 			str += '<tr class="row_entry row_nonexpandable row_book row_directbook row_id_'+rowid+' row_hidden" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-bookid="'+book.id+'">';
 			str += '<td class="td_name"><i class="fas fa-book"></i>' + book.title + '</td>';
-			str += '<td></td>';
-			str += '<td title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
-			str += '<td title="'+book.filesize+' bytes">' + formatSize(book.filesize) + '</td>';
-			str += '<td>' + book.filecount + '</td>';
+			str += '<td class="td_bcount"></td>';
+			str += '<td class="td_length" title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
+			str += '<td class="td_size"   title="'+book.filesize+' bytes">' + formatSize(book.filesize) + '</td>';
+			str += '<td class="td_fcount">' + book.filecount + '</td>';
 			str += '</tr>';
 		}
 
@@ -209,21 +209,21 @@ function getTableHTML(db)
 			const rid_series = rowid;
 			str += '<tr class="row_entry row_expandable row_series row_id_'+rowid+' row_hidden" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-seriesid="'+series.id+'">';
 			str += '<td class="td_name"><i class="fas fa-list-alt"></i>' + series.title + '</td>';
-			str += '<td>' + series.bookcount + '</td>';
-			str += '<td title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
-			str += '<td title="'+series.filesize+' bytes">' + formatSize(series.filesize) + '</td>';
-			str += '<td>' + series.filecount + '</td>';
+			str += '<td class="td_bcount">' + series.bookcount + '</td>';
+			str += '<td class="td_length" title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
+			str += '<td class="td_size"   title="'+series.filesize+' bytes">' + formatSize(series.filesize) + '</td>';
+			str += '<td class="td_fcount">' + series.filecount + '</td>';
 			str += '</tr>';
 
 			for (const [booknum, sbook] of Object.entries(series.books))
 			{
 				rowid++;
 				str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' row_hidden" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
-				str += '<td class="td_name"><div><i class="fas fa-book"></i><span class="book_num"><span>' + booknum + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
-				str += '<td></td>';
-				str += '<td title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
-				str += '<td title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';
-				str += '<td>' + sbook.filecount + '</td>';
+				str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_num"><span>' + booknum + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
+				str += '<td class="td_bcount"></td>';
+				str += '<td class="td_length" title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
+				str += '<td class="td_size"   title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';
+				str += '<td class="td_fcount">' + sbook.filecount + '</td>';
 				str += '</tr>';
 			}
 		}

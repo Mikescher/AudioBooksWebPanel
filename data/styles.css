@@ -282,3 +282,31 @@ body {
     background: #FFF;
     color: #000;
 }
+
+.th_name   { width: 600px; }
+.th_bcount { width:  90px; }
+.th_length { width: 150px; }
+.th_size   { width:  70px; }
+.th_fcount { width:  80px; }
+
+@media(max-width:1200px)
+{
+    .th_bcount, .td_bcount { display: none; }
+}
+
+@media(max-width:1100px)
+{
+    .th_name   { width: 300px; }
+}
+
+@media(max-width:750px)
+{
+    .th_fcount, .td_fcount { display: none; }
+}
+
+@media(max-width:650px)
+{
+    .th_name   { width: auto; }
+    .th_length { width: auto; }
+    .th_size   { width: auto; }
+}
