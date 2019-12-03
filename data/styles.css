@@ -236,17 +236,14 @@ body {
     cursor: pointer;
 }
 
-.row_collapsed {
-    _visibility: collapse;
-    _display: none;
+.row_hidden {
+    visibility: collapse;
+    display: none;
 }
 
 #maintab {
     margin-bottom: 48px;
 }
-
-
-
 
 .td_name .fas {
     margin-right: 0.5em;
@@ -258,7 +255,7 @@ body {
 }
 
 .td_name div .book_num {
-    background: #888;
+    background: #444;
     color: #FFF;
     border-radius: 4px;
     margin-right: 0.5em;
@@ -281,3 +278,7 @@ body {
 .row_seriesbook .td_name { padding-left: 3em; }
 
 
+.row_entry:hover .td_name .book_num {
+    background: #FFF;
+    color: #000;
+}

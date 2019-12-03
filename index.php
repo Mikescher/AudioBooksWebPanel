@@ -18,8 +18,9 @@
 <body>
 
     <script src="/data/jquery-3.4.1.js" type="text/javascript" ></script>
-    <script src="/data/script.js" type="module" ></script>
-    <script src="/data/spin.js" type="module" ></script>
+    <script src="/data/spin.js" type="text/javascript" ></script>
+
+    <script src="/data/script.js" type="text/javascript" ></script>
 
 	<div id="root">
 
