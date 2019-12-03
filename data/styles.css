@@ -67,8 +67,6 @@ body {
 }
 
 #content {
-    margin-left: 250px;
-
     min-height: calc(100vh - 133px);
     width: auto;
     position: relative;
@@ -77,6 +75,7 @@ body {
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 #topheader {
@@ -229,8 +228,22 @@ body {
 }
 
 
+.row_entry:hover {
+    background: #555;
+    color: white;
+}
+.row_expandable:hover {
+    cursor: pointer;
+}
 
+.row_collapsed {
+    _visibility: collapse;
+    _display: none;
+}
 
+#maintab {
+    margin-bottom: 48px;
+}
 
 
 
