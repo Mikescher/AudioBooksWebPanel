@@ -2,6 +2,8 @@
 let DATA_INFO  = null;
 let DATA_BOOKS = null;
 
+let ORDER = "";
+
 $(window).on('load', function()
 {
 	const spin =  showSpinner();
@@ -62,10 +64,12 @@ function processData(data)
 	{
 		let aobj =
 		{
+			'otype': 'author',
 			'id': Number(author['id']),
-			'name': author['name'],
+			'title': author['name'],
 			'all_books': [],
 			'direct_books': [],
+			'children': [],
 			'bookcount': 0,
 			'series': [],
 			'audiolength': 0,
@@ -81,9 +85,10 @@ function processData(data)
 	{
 		let sobj =
 		{
+			'otype': 'series',
 			'id': Number(series['id']),
 			'title': series['title'],
-			'books': {},
+			'books': [],
 			'bookcount': 0,
 			'audiolength': 0,
 			'filesize': 0,
@@ -92,6 +97,7 @@ function processData(data)
 		const author = author_map[Number(series['author_id'])];
 
 		author.series.push(sobj);
+		author.children.push(sobj);
 		series_map[sobj.id] = sobj;
 	}
 
@@ -99,11 +105,14 @@ function processData(data)
 	{
 		let bobj =
 		{
+			'otype': 'book',
 			'id': Number(book['id']),
 			'title': book['title'],
 			'audiolength': Number(book['audiolength']),
 			'filesize': Number(book['filesize']),
 			'filecount': Number(book['filecount']),
+			'bookcount': 1,
+			'seriesindex': null,
 		};
 
 		const author = author_map[Number(book['author_id'])];
@@ -113,7 +122,9 @@ function processData(data)
 		{
 			const series = series_map[Number(book['series_id'])];
 
-			series.books[Number(book['series_index'])] = book;
+			book.seriesindex = Number(book['series_index']);
+
+			series.books.push(book);
 
 			series.audiolength += bobj.audiolength;
 			series.filesize    += bobj.filesize;
@@ -123,6 +134,7 @@ function processData(data)
 		else
 		{
 			author.direct_books.push(bobj);
+			author.children.push(bobj);
 		}
 
 		author.audiolength += bobj.audiolength;
@@ -180,19 +192,29 @@ function getTableHTML(db)
 	db = JSON.parse(JSON.stringify(db));
 
 	const search = $("#filter").val();
-	db = filter(db, search);
+	db = datafilter(db, search);
+
+	db = datasort(db, ORDER);
 
 	const expand = (search.trim() !== "");
 
 	let str = "";
 
+	const ofas_order = ORDER[0]==="+" ? "fa-caret-up" : "fa-caret-down";
+
+	const ofas1 = (ORDER.substr(1) === "title") ? '<i class="fas '+ofas_order+'"></i>' : '';
+	const ofas2 = (ORDER.substr(1) === "bookcount") ? '<i class="fas '+ofas_order+'"></i>' : '';
+	const ofas3 = (ORDER.substr(1) === "audiolength") ? '<i class="fas '+ofas_order+'"></i>' : '';
+	const ofas4 = (ORDER.substr(1) === "filesize") ? '<i class="fas '+ofas_order+'"></i>' : '';
+	const ofas5 = (ORDER.substr(1) === "filecount") ? '<i class="fas '+ofas_order+'"></i>' : '';
+
 	str += '<thead>';
 	str += '<tr>';
-	str += '<th class="th_name"  >Name</th>';
-	str += '<th class="th_bcount">Book count</th>';
-	str += '<th class="th_length">Length</th>';
-	str += '<th class="th_size"  >Size</th>';
-	str += '<th class="th_fcount">File count</th>';
+	str += '<th class="th_name"  ><a href="#" onclick="rotateOrder(\'title\')">Name'+ofas1+'</a></th>';
+	str += '<th class="th_bcount"><a href="#" onclick="rotateOrder(\'bookcount\')">Book count'+ofas2+'</a></th>';
+	str += '<th class="th_length"><a href="#" onclick="rotateOrder(\'audiolength\')">Length'+ofas3+'</a></th>';
+	str += '<th class="th_size"  ><a href="#" onclick="rotateOrder(\'filesize\')">Size'+ofas4+'</a></th>';
+	str += '<th class="th_fcount"><a href="#" onclick="rotateOrder(\'filecount\')">File count'+ofas5+'</a></th>';
 	str += '</tr>';
 	str += '</thead>';
 
@@ -204,51 +226,54 @@ function getTableHTML(db)
 		rowid++;
 		const rid_author = rowid;
 		str += '<tr class="row_entry row_expandable '+(expand?'row_open':'')+' row_author row_id_'+rowid+'" onclick="rowclick('+rowid+');" data-epath="['+rowid+']" data-rowid="'+rowid+'" data-eparent="" data-authorid="'+author.id+'">';
-		str += '<td class="td_name"><i class="fas fa-user"></i>' + author.name + '</td>';
+		str += '<td class="td_name"><i class="fas fa-user"></i>' + author.title + '</td>';
 		str += '<td class="td_bcount">' + author.bookcount + '</td>';
 		str += '<td class="td_length" title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
 		str += '<td class="td_size"   title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
 		str += '<td class="td_fcount">' + author.filecount + '</td>';
 		str += '</tr>';
 
-		for (const book of author.direct_books)
+		for (const child of author.children)
 		{
-			rowid++;
-			str += '<tr class="row_entry row_nonexpandable row_book row_directbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-bookid="'+book.id+'">';
-			str += '<td class="td_name"><i class="fas fa-book"></i>' + book.title + '</td>';
-			str += '<td class="td_bcount"></td>';
-			str += '<td class="td_length" title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
-			str += '<td class="td_size"   title="'+book.filesize+' bytes">' + formatSize(book.filesize) + '</td>';
-			str += '<td class="td_fcount">' + book.filecount + '</td>';
-			str += '</tr>';
-		}
-
-		for (const series of author.series)
-		{
-			rowid++;
-			const rid_series = rowid;
-			str += '<tr class="row_entry '+(expand?'row_open':'')+' row_expandable row_series row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-seriesid="'+series.id+'">';
-			str += '<td class="td_name"><i class="fas fa-list-alt"></i>' + series.title + '</td>';
-			str += '<td class="td_bcount">' + series.bookcount + '</td>';
-			str += '<td class="td_length" title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
-			str += '<td class="td_size"   title="'+series.filesize+' bytes">' + formatSize(series.filesize) + '</td>';
-			str += '<td class="td_fcount">' + series.filecount + '</td>';
-			str += '</tr>';
-
-			for (const [booknum, sbook] of Object.entries(series.books))
+			if (child.otype === 'book')
 			{
+				const book = child;
 				rowid++;
-				str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
-				str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_num"><span>' + booknum + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
+				str += '<tr class="row_entry row_nonexpandable row_book row_directbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-bookid="'+book.id+'">';
+				str += '<td class="td_name"><i class="fas fa-book"></i>' + book.title + '</td>';
 				str += '<td class="td_bcount"></td>';
-				str += '<td class="td_length" title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
-				str += '<td class="td_size"   title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';
-				str += '<td class="td_fcount">' + sbook.filecount + '</td>';
+				str += '<td class="td_length" title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
+				str += '<td class="td_size"   title="'+book.filesize+' bytes">' + formatSize(book.filesize) + '</td>';
+				str += '<td class="td_fcount">' + book.filecount + '</td>';
 				str += '</tr>';
 			}
-		}
+			else if (child.otype === 'series')
+			{
+				const series = child;
+				rowid++;
+				const rid_series = rowid;
+				str += '<tr class="row_entry '+(expand?'row_open':'')+' row_expandable row_series row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-seriesid="'+series.id+'">';
+				str += '<td class="td_name"><i class="fas fa-list-alt"></i>' + series.title + '</td>';
+				str += '<td class="td_bcount">' + series.bookcount + '</td>';
+				str += '<td class="td_length" title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
+				str += '<td class="td_size"   title="'+series.filesize+' bytes">' + formatSize(series.filesize) + '</td>';
+				str += '<td class="td_fcount">' + series.filecount + '</td>';
+				str += '</tr>';
 
-		rowid++;
+				for (const sbook of series.books)
+				{
+					rowid++;
+					str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
+					str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_num"><span>' + sbook.seriesindex + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
+					str += '<td class="td_bcount"></td>';
+					str += '<td class="td_length" title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
+					str += '<td class="td_size"   title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';
+					str += '<td class="td_fcount">' + sbook.filecount + '</td>';
+					str += '</tr>';
+				}
+			}
+			else throw "what?";
+		}
 	}
 	str += '</tbody>';
 
@@ -256,7 +281,20 @@ function getTableHTML(db)
 	return str;
 }
 
-function filter(db, search)
+function rotateOrder(col)
+{
+	if (DATA_BOOKS == null) return;
+
+	     if (ORDER === "+"+col) ORDER = "-"+col;
+	else if (ORDER === "-"+col) ORDER = "";
+	else                        ORDER = "+"+col;
+
+	const tab = getTableHTML(DATA_BOOKS);
+
+	$("#maintab").html(tab);
+}
+
+function datafilter(db, search)
 {
 	if (search.trim() === "") return db;
 
@@ -266,7 +304,7 @@ function filter(db, search)
 	{
 		let author_in = false;
 		let author_direct_in = false;
-		if(isinfilter(author.name, search)) author_in = author_direct_in = true;
+		if(isinfilter(author.title, search)) author_in = author_direct_in = true;
 
 		let a_all_books = [];
 		let a_direct_books = [];
@@ -289,9 +327,9 @@ function filter(db, search)
 			if (author_direct_in) series_direct_in = series_in = true;
 			if(isinfilter(series.title, search)) series_in = series_direct_in = author_in = true;
 
-			let s_books = {};
+			let s_books = [];
 
-			for(const [seriesindex, seriesbook] of Object.entries(series.books))
+			for(const seriesbook of series.books)
 			{
 				let sbook_in = false;
 				if (author_direct_in) sbook_in = true;
@@ -299,7 +337,7 @@ function filter(db, search)
 				if(isinfilter(seriesbook.title, search)) sbook_in = series_in = author_in = true;
 
 				if (sbook_in) a_all_books.push(seriesbook);
-				if (sbook_in) s_books[seriesindex] = seriesbook;
+				if (sbook_in) s_books.push(seriesbook);
 			}
 
 			series.books = s_books;
@@ -315,6 +353,58 @@ function filter(db, search)
 	}
 
 	return result;
+}
+
+function datacomp(o)
+{
+	const dir = (o[0]==="+") ? +1 : -1;
+	const order = o.substr(1);
+
+	return function(a, b)
+	{
+		if ((typeof a[order]) === "string") return dir * Math.sign(a[order].toLowerCase().localeCompare(b[order].toLowerCase()));
+		else return dir * Math.sign(a[order] - b[order]);
+	};
+}
+
+function datasort(db, order)
+{
+	if (order === "")
+	{
+		db = db.sort(datacomp("+title"));
+
+		for (const author of db)
+		{
+			author.all_books = author.all_books.sort(datacomp("+title"));
+			author.direct_books = author.direct_books.sort(datacomp("+title"));
+			author.series = author.series.sort(datacomp("+title"));
+			author.children = author.children.sort(datacomp("+title"));
+
+			for (const series of author.series)
+			{
+				series.books = series.books.sort(datacomp("+seriesindex"));
+			}
+		}
+
+		return db;
+	}
+
+	db = db.sort(datacomp(ORDER));
+
+	for (const author of db)
+	{
+		author.all_books = author.all_books.sort(datacomp(ORDER));
+		author.direct_books = author.direct_books.sort(datacomp(ORDER));
+		author.series = author.series.sort(datacomp(ORDER));
+		author.children = author.children.sort(datacomp(ORDER));
+
+		for (const series of author.series)
+		{
+			series.books = series.books.sort(datacomp(ORDER));
+		}
+	}
+
+	return db;
 }
 
 function isinfilter(value, search)

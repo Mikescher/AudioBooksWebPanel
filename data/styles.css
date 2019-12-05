@@ -284,12 +284,12 @@ body {
 }
 
 .th_name   { width: 600px; }
-.th_bcount { width:  90px; }
-.th_length { width: 150px; }
+.th_bcount { width: 110px; }
+.th_length { width: 160px; }
 .th_size   { width:  70px; }
-.th_fcount { width:  80px; }
+.th_fcount { width:  90px; }
 
-@media(max-width:1200px)
+@media(max-width:1300px)
 {
     .th_bcount, .td_bcount { display: none; }
 }
@@ -309,7 +309,12 @@ body {
     .th_name   { width: auto; }
     .th_length { width: auto; }
     .th_size   { width: auto; }
+
+    #maintab { margin-left: 8px; margin-right: 8px; }
 }
 
 .row_series .fa-list-alt { color: #850; }
 .row_open   .fa-list-alt { color: #000; }
+
+#maintab th a { color: black; text-decoration: none; }
+#maintab th i { margin-left: 0.35em; font-size: 0.9em; }
