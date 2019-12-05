@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
     <meta name="robots" content="noindex">
 	<title>AudioBooks - Webview</title>
-	<link rel="icon" type="image/png" href="/data/icon.png"/>
+	<link rel="icon" type="image/png" href="/data/icon_audio.png"/>
 
     <link rel="stylesheet" type="text/css" href="/data/pure-min.css"/>
     <link rel="stylesheet" href="/data/spin.css"/>
@@ -25,8 +25,14 @@
 	<div id="root">
 
         <div id="header">
-            <div id="headertext"><img src="/data/icon.png" /><span>Audiobooks</span></div>
-            <input type="text" id="filter" placeholder="Filter" >
+            <div id="headertext"><img src="/data/icon_audio.png" /><span>Audiobooks</span></div>
+            <input type="text" id="filter" placeholder="Filter">
+
+            <div id="headerlinks">
+                <a href="https://ebooks.mikescher.com"><img src="/data/icon_ebk.png" /><span> Ebooks</span></a>
+                <a href="https://audiobooks.mikescher.com"><img src="/data/icon_audio.png" /><span> Audiobooks</span></a>
+                <a href="https://clipcorn.mikescher.com"><img src="/data/icon_jcc.png" /><span> Movies</span></a>
+            </div>
         </div>
 
         <div id="content">
