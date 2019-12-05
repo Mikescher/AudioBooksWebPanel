@@ -36,13 +36,13 @@
         </div>
 
         <div id="pagefooter" class="">
-            <div class="FooterInfo">Script:<span id="InfoCommit">?</span></div>
-            <div class="FooterInfo">Database size:<span id="InfoSize">?</span></div>
-            <div class="FooterInfo">Data size:<span id="InfoDatasize">?</span></div>
-            <div class="FooterInfo">Total length:<span id="InfoDataLength">?</span></div>
-            <div class="FooterInfo">Authors:<span id="InfoDataAuthorCount">?</span></div>
-            <div class="FooterInfo">Books:<span id="InfoDataBookCount">?</span></div>
-            <div class="FooterInfo">Files:<span id="InfoDataFileCount">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Script:</span><span class="FIValue" id="InfoCommit">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Database size:</span><span class="FIValue" id="InfoSize">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Data size:</span><span class="FIValue" id="InfoDatasize">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Total length:</span><span class="FIValue" id="InfoDataLength">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Authors:</span><span class="FIValue" id="InfoDataAuthorCount">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Books:</span><span class="FIValue" id="InfoDataBookCount">?</span></div>
+            <div class="FooterInfo"><span class="FIText">Files:</span><span class="FIValue" id="InfoDataFileCount">?</span></div>
             <div class="Sho"><a href="#" id="AnchorSho">Ϸ</a></div>
         </div>
 	</div>
