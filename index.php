@@ -26,7 +26,7 @@
 
         <div id="header">
             <div id="headertext"><img src="/data/icon.png" /><span>Audiobooks</span></div>
-            <input type="text" class="filter" placeholder="Filter" >
+            <input type="text" id="filter" placeholder="Filter" >
         </div>
 
         <div id="content">

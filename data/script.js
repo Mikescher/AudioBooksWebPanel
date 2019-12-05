@@ -1,4 +1,7 @@
 
+let DATA_INFO  = null;
+let DATA_BOOKS = null;
+
 $(window).on('load', function()
 {
 	const spin =  showSpinner();
@@ -19,6 +22,8 @@ $(window).on('load', function()
 			$("#InfoDataBookCount").text(json['book_count']);
 			$("#InfoDataFileCount").text(json['file_count']);
 
+			DATA_INFO = data;
+
 			return data;
 		}
 	});
@@ -33,10 +38,16 @@ $(window).on('load', function()
 
 			spin.stop();
 
+			DATA_BOOKS = db;
+
 			return data;
 		}
 	});
 
+	$("#filter").on('input', function () {
+		if (DATA_BOOKS === null) return;
+		$("#maintab").html(getTableHTML(DATA_BOOKS));
+	});
 
 });
 
@@ -55,6 +66,7 @@ function processData(data)
 			'name': author['name'],
 			'all_books': [],
 			'direct_books': [],
+			'bookcount': 0,
 			'series': [],
 			'audiolength': 0,
 			'filesize': 0,
@@ -116,6 +128,7 @@ function processData(data)
 		author.audiolength += bobj.audiolength;
 		author.filesize    += bobj.filesize;
 		author.filecount   += bobj.filecount;
+		author.bookcount++;
 	}
 
 	return db;
@@ -164,6 +177,13 @@ function rowclick(rowid)
 
 function getTableHTML(db)
 {
+	db = JSON.parse(JSON.stringify(db));
+
+	const search = $("#filter").val();
+	db = filter(db, search);
+
+	const expand = (search.trim() !== "");
+
 	let str = "";
 
 	str += '<thead>';
@@ -183,9 +203,9 @@ function getTableHTML(db)
 	{
 		rowid++;
 		const rid_author = rowid;
-		str += '<tr class="row_entry row_expandable row_author row_id_'+rowid+'" onclick="rowclick('+rowid+');" data-epath="['+rowid+']" data-rowid="'+rowid+'" data-eparent="" data-authorid="'+author.id+'">';
+		str += '<tr class="row_entry row_expandable '+(expand?'row_open':'')+' row_author row_id_'+rowid+'" onclick="rowclick('+rowid+');" data-epath="['+rowid+']" data-rowid="'+rowid+'" data-eparent="" data-authorid="'+author.id+'">';
 		str += '<td class="td_name"><i class="fas fa-user"></i>' + author.name + '</td>';
-		str += '<td class="td_bcount">' + author.all_books.length + '</td>';
+		str += '<td class="td_bcount">' + author.bookcount + '</td>';
 		str += '<td class="td_length" title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
 		str += '<td class="td_size"   title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
 		str += '<td class="td_fcount">' + author.filecount + '</td>';
@@ -194,7 +214,7 @@ function getTableHTML(db)
 		for (const book of author.direct_books)
 		{
 			rowid++;
-			str += '<tr class="row_entry row_nonexpandable row_book row_directbook row_id_'+rowid+' row_hidden" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-bookid="'+book.id+'">';
+			str += '<tr class="row_entry row_nonexpandable row_book row_directbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-bookid="'+book.id+'">';
 			str += '<td class="td_name"><i class="fas fa-book"></i>' + book.title + '</td>';
 			str += '<td class="td_bcount"></td>';
 			str += '<td class="td_length" title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
@@ -207,7 +227,7 @@ function getTableHTML(db)
 		{
 			rowid++;
 			const rid_series = rowid;
-			str += '<tr class="row_entry row_expandable row_series row_id_'+rowid+' row_hidden" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-seriesid="'+series.id+'">';
+			str += '<tr class="row_entry '+(expand?'row_open':'')+' row_expandable row_series row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_author+'" data-seriesid="'+series.id+'">';
 			str += '<td class="td_name"><i class="fas fa-list-alt"></i>' + series.title + '</td>';
 			str += '<td class="td_bcount">' + series.bookcount + '</td>';
 			str += '<td class="td_length" title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
@@ -218,7 +238,7 @@ function getTableHTML(db)
 			for (const [booknum, sbook] of Object.entries(series.books))
 			{
 				rowid++;
-				str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' row_hidden" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
+				str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
 				str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_num"><span>' + booknum + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
 				str += '<td class="td_bcount"></td>';
 				str += '<td class="td_length" title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
@@ -234,6 +254,72 @@ function getTableHTML(db)
 
 
 	return str;
+}
+
+function filter(db, search)
+{
+	if (search.trim() === "") return db;
+
+	let result = [];
+
+	for (const author of db)
+	{
+		let author_in = false;
+		let author_direct_in = false;
+		if(isinfilter(author.name, search)) author_in = author_direct_in = true;
+
+		let a_all_books = [];
+		let a_direct_books = [];
+		let a_series = [];
+
+		for(const directbook of author.direct_books)
+		{
+			let dbook_in = false;
+			if (author_direct_in) dbook_in = true;
+			if (isinfilter(directbook.title, search)) dbook_in = author_in = true;
+
+			if (dbook_in) a_all_books.push(directbook);
+			if (dbook_in) a_direct_books.push(directbook);
+		}
+
+		for (const series of author.series)
+		{
+			let series_in = false;
+			let series_direct_in = false;
+			if (author_direct_in) series_direct_in = series_in = true;
+			if(isinfilter(series.title, search)) series_in = series_direct_in = author_in = true;
+
+			let s_books = {};
+
+			for(const [seriesindex, seriesbook] of Object.entries(series.books))
+			{
+				let sbook_in = false;
+				if (author_direct_in) sbook_in = true;
+				if (series_direct_in) sbook_in = true;
+				if(isinfilter(seriesbook.title, search)) sbook_in = series_in = author_in = true;
+
+				if (sbook_in) a_all_books.push(seriesbook);
+				if (sbook_in) s_books[seriesindex] = seriesbook;
+			}
+
+			series.books = s_books;
+
+			if (series_in) a_series.push(series);
+		}
+
+		author.all_books = a_all_books;
+		author.direct_books = a_direct_books;
+		author.series = a_series;
+
+		if (author_in) result.push(author);
+	}
+
+	return result;
+}
+
+function isinfilter(value, search)
+{
+	return value.toLowerCase().includes(search.toLowerCase().trim());
 }
 
 function formatLength(secs) {

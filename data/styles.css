@@ -106,7 +106,7 @@ body {
     margin: 8px;
 }
 
-.filter {
+#filter {
     position: absolute;
     right: 6px;
     top: 6px;
@@ -310,3 +310,6 @@ body {
     .th_length { width: auto; }
     .th_size   { width: auto; }
 }
+
+.row_series .fa-list-alt { color: #850; }
+.row_open   .fa-list-alt { color: #000; }
