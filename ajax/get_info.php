@@ -2,6 +2,8 @@
 
 require_once (__DIR__ . '/../model/Base.php');
 
+header('Content-Type: application/json');
+
 $db = Database::connect();
 
 $data = $db->sql_query_assoc(file_get_contents('../sql/info.sql'));

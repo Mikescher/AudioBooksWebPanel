@@ -1,4 +1,6 @@
 
+const BASE_PATH = 'file:////Melkor/Klotho';
+
 let DATA_INFO  = null;
 let DATA_BOOKS = null;
 
@@ -10,10 +12,8 @@ $(window).on('load', function()
 
 	$.ajax({
 		url: "/ajax/get_info.php",
-		success: function(data)
+		success: function(json)
 		{
-			let json = JSON.parse(data);
-
 			$("#pagefooter").css('display', "block");
 
 			$("#InfoSize").text(formatSize(json['dbfilesize'])).attr("title", json['dbfilesize'] + " bytes");
@@ -24,17 +24,17 @@ $(window).on('load', function()
 			$("#InfoDataBookCount").text(json['book_count']);
 			$("#InfoDataFileCount").text(json['file_count']);
 
-			DATA_INFO = data;
+			DATA_INFO = json;
 
-			return data;
+			return json;
 		}
 	});
 
 	$.ajax({
 		url: "/ajax/get_data.php",
-		success: function(data)
+		success: function(json)
 		{
-			let db = processData(JSON.parse(data));
+			let db = processData(json);
 
 			$("#maintab").html(getTableHTML(db));
 
@@ -42,7 +42,7 @@ $(window).on('load', function()
 
 			DATA_BOOKS = db;
 
-			return data;
+			return json;
 		}
 	});
 
@@ -74,7 +74,8 @@ function processData(data)
 			'series': [],
 			'audiolength': 0,
 			'filesize': 0,
-			'filecount': 0
+			'filecount': 0,
+			'path': BASE_PATH+author['relative_path'],
 		};
 
 		db.push(aobj);
@@ -92,7 +93,8 @@ function processData(data)
 			'bookcount': 0,
 			'audiolength': 0,
 			'filesize': 0,
-			'filecount': 0
+			'filecount': 0,
+			'path': BASE_PATH+series['relative_path'],
 		};
 		const author = author_map[Number(series['author_id'])];
 
