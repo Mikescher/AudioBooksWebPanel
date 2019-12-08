@@ -311,6 +311,7 @@ function datafilter(db, search)
 		let a_all_books = [];
 		let a_direct_books = [];
 		let a_series = [];
+		let a_children = [];
 
 		for(const directbook of author.direct_books)
 		{
@@ -320,6 +321,7 @@ function datafilter(db, search)
 
 			if (dbook_in) a_all_books.push(directbook);
 			if (dbook_in) a_direct_books.push(directbook);
+			if (dbook_in) a_children.push(directbook);
 		}
 
 		for (const series of author.series)
@@ -345,11 +347,13 @@ function datafilter(db, search)
 			series.books = s_books;
 
 			if (series_in) a_series.push(series);
+			if (series_in) a_children.push(series);
 		}
 
 		author.all_books = a_all_books;
 		author.direct_books = a_direct_books;
 		author.series = a_series;
+		author.children = a_children;
 
 		if (author_in) result.push(author);
 	}
