@@ -294,7 +294,7 @@ body {
 .th_name   { width: 600px; }
 .th_bcount { width: 110px; }
 .th_length { width: 160px; }
-.th_size   { width:  70px; }
+.th_size   { width:  80px; }
 .th_fcount { width:  90px; }
 
 @media(max-width:1300px)
