@@ -94,6 +94,7 @@ function processData(data)
 			'audiolength': 0,
 			'filesize': 0,
 			'filecount': 0,
+			'has_indexed_books': false,
 			'path': BASE_PATH+series['relative_path'],
 		};
 		const author = author_map[Number(series['author_id'])];
@@ -124,7 +125,7 @@ function processData(data)
 		{
 			const series = series_map[Number(book['series_id'])];
 
-			book.seriesindex = Number(book['series_index']);
+			book.seriesindex = (book['series_index']===null) ? null : Number(book['series_index']);
 
 			series.books.push(book);
 
@@ -132,6 +133,8 @@ function processData(data)
 			series.filesize    += bobj.filesize;
 			series.filecount   += bobj.filecount;
 			series.bookcount++;
+
+			if (book.seriesindex !== null) series.has_indexed_books = true;
 		}
 		else
 		{
@@ -266,7 +269,11 @@ function getTableHTML(db)
 				{
 					rowid++;
 					str += '<tr class="row_entry row_nonexpandable row_book row_seriesbook row_id_'+rowid+' '+(expand?'':'row_hidden')+'" onclick="rowclick('+rowid+');" data-epath="['+rid_author+','+rid_series+','+rowid+']" data-rowid="'+rowid+'" data-eparent="'+rid_series+'" data-bookid="'+sbook.id+'">';
-					str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_num"><span>' + sbook.seriesindex + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
+
+					if (series.has_indexed_books)
+						str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_num"><span>' + sbook.seriesindex + '</span></span><span class="book_tit">' + sbook.title + '</span></div></td>';
+					else
+						str += '<td class="td_name"  ><div><i class="fas fa-book"></i><span class="book_tit">' + sbook.title + '</span></div></td>';
 					str += '<td class="td_bcount"></td>';
 					str += '<td class="td_length" title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
 					str += '<td class="td_size"   title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';
