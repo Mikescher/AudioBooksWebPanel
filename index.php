@@ -32,6 +32,7 @@
                 <a href="https://ebooks.mikescher.com"><img src="/data/icon_ebk.png" /><span> Ebooks</span></a>
                 <a href="https://audiobooks.mikescher.com"><img src="/data/icon_audio.png" /><span> Audiobooks</span></a>
                 <a href="https://clipcorn.mikescher.com"><img src="/data/icon_jcc.png" /><span> Movies</span></a>
+                <a href="https://opds.mikescher.com"><img src="/data/icon_opds.png" /><span> Calibre</span></a>
             </div>
         </div>
 
