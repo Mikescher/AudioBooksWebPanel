@@ -2,6 +2,8 @@
 
 require_once (__DIR__ . '/../model/Base.php');
 
+Util::appendLog('AJAX', 'get_cover');
+
 header('Content-Type: application/json');
 
 $db = Database::connect();
