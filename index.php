@@ -34,10 +34,10 @@ Util::appendLog('WEB', 'index');
             <input type="text" id="filter" placeholder="Filter">
 
             <div id="headerlinks">
-                <a href="https://ebooks.mikescher.com"><img src="/data/icon_ebk.png" /><span> Ebooks</span></a>
-                <a href="https://audiobooks.mikescher.com"><img src="/data/icon_audio.png" /><span> Audiobooks</span></a>
-                <a href="https://clipcorn.mikescher.com"><img src="/data/icon_jcc.png" /><span> Movies</span></a>
-                <a href="https://opds.mikescher.com"><img src="/data/icon_opds.png" /><span> Calibre</span></a>
+                <a href="https://ebooks.zeugs.xyz"><img src="/data/icon_ebk.png" /><span> Ebooks</span></a>
+                <a href="https://audiobooks.zeugs.xyz"><img src="/data/icon_audio.png" /><span> Audiobooks</span></a>
+                <a href="https://clipcorn.zeugs.xyz"><img src="/data/icon_jcc.png" /><span> Movies</span></a>
+                <a href="https://opds.zeugs.xyz"><img src="/data/icon_opds.png" /><span> Calibre</span></a>
             </div>
         </div>
 
