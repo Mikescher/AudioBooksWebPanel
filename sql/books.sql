@@ -5,11 +5,12 @@ SELECT
    books.series_index AS [series_index],
    books.author_id AS [author_id],
    books.relative_path AS [relative_path],
-   SUM(files.length) AS [audiolength],
-   SUM(files.filesize) AS [filesize],
+   SUM(meta.length) AS [audiolength],
+   SUM(meta.filesize) AS [filesize],
    COUNT(files.id) AS [filecount]
 FROM files
 	LEFT JOIN books ON files.book_id = books.id
+	LEFT JOIN meta ON files.checksum = meta.checksum
 GROUP BY
 	books.id, books.title, series_index, books.relative_path
 ORDER BY
