@@ -6,6 +6,8 @@ Util::appendLog('AJAX', 'get_cover');
 
 header('Content-Type: application/json');
 
+if (Cache::serve(__FILE__)) return;
+
 $db = Database::connect();
 
 $authors = $db->sql_query_assoc(file_get_contents('../sql/authors.sql'));
@@ -19,4 +21,8 @@ $json =
 	'books' => $books,
 ];
 
-echo json_encode($json, JSON_PRETTY_PRINT);
+$jsonstr = json_encode($json, JSON_PRETTY_PRINT);
+
+Cache::put(__FILE__, $jsonstr);
+
+echo $jsonstr;

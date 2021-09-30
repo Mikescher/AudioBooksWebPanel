@@ -30,4 +30,17 @@ class Util
 
 		file_put_contents(UserConfig::get('requestlog_path'), $line . PHP_EOL , FILE_APPEND | LOCK_EX);
 	}
+
+	public static function getCommitID()
+	{
+		$f_head = __DIR__ . '/../.git/HEAD';
+		$c_head = trim(file_get_contents($f_head));
+
+		$p_ref = str_replace("ref: ", "", $c_head);
+
+		$f_head = __DIR__ . '/../.git/' . $p_ref;
+		$c_head = trim(file_get_contents($f_head));
+
+		return $c_head;
+	}
 }
