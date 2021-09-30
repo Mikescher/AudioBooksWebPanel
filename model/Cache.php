@@ -24,6 +24,8 @@ class Cache
 	{
 		$cachefile = self::getCacheFile($ident);
 
+		@mkdir(UserConfig::get("datacache"));
+
 		$gzip = gzencode($response);
 
 		// delete files older than 21 days
