@@ -38,6 +38,7 @@ Util::appendLog('WEB', 'index');
                 <a href="https://audiobooks.zeugs.xyz"><img src="/data/icon_audio.png" /><span> Audiobooks</span></a>
                 <a href="https://clipcorn.zeugs.xyz"><img src="/data/icon_jcc.png" /><span> Movies</span></a>
                 <a href="https://opds.zeugs.xyz"><img src="/data/icon_opds.png" /><span> Calibre</span></a>
+                <a href="https://music.zeugs.xyz"><img src="/data/icon_mply.png" /><span> Music</span></a>
             </div>
         </div>
 
