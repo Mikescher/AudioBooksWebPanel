@@ -145,6 +145,8 @@ body {
     padding: 4px;
 
     border-top: 1px solid #BBB;
+
+    min-height: calc( 42px - 4px - 4px);
 }
 
 #headerlinks > a > span { display: none; }
