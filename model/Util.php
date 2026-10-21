@@ -33,6 +33,8 @@ class Util
 
 	public static function getCommitID()
 	{
+		if (getenv('COMMIT_ID')) return getenv('COMMIT_ID');
+
 		$f_head = __DIR__ . '/../.git/HEAD';
 		$c_head = trim(file_get_contents($f_head));
 

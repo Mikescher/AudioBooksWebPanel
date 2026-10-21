@@ -1,0 +1,59 @@
+# https://docs.gitea.com/next/usage/actions/quickstart
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+# https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+
+name: CI/CD
+run-name: "${{ gitea.ref_name }}: ${{ gitea.event.head_commit.message }}"
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  build:
+    name: Build Docker
+    runs-on: bfb-cicd-latest
+    steps:
+
+      - name: Docker login (1)
+        run: echo -n "${{ secrets.DOCKER_REG_PASS }}" | docker login registry.blackforestbytes.com -u docker                --password-stdin
+      - name: Docker login (2)
+        run: echo -n "${{ secrets.DOCKER_IO_PASS }}"  | docker login                               -u "${{ secrets.DOCKER_IO_USER }}" --password-stdin
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Print Infos
+        run: |
+          echo "SHA              := ${{ gitea.sha }}"
+          echo "Branch           := ${{ gitea.ref_name }}"
+          echo "Repository       := ${{ gitea.repository }}"
+
+      - name: Build container
+        run: |
+          cd "${{ gitea.workspace }}" && \
+          make docker                 && \
+          make docker-push
+
+  deploy:
+    name: Deploy to Server
+    needs: [build]
+    runs-on: bfb-cicd-latest
+    steps:
+      - name: Deploy on remote (via ssh)
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host:     mikescher.com
+          username: deploybot
+          port:     7919
+          key:      "${{ secrets.SSH_KEY_MSCOMDEPLOYBOT }}"
+          script: |
+            cd /var/docker/__run && sudo ./deploy-single-generic \
+                                         --project-name "AUDIOBOOKSWEBPANEL" \
+                                         --container-name "audiobookswebpanel" \
+                                         --image "registry.blackforestbytes.com/mikescher/audiobookswebpanel" \
+                                         --tag "${{ gitea.sha }}" \
+                                         --port "49028:80" \
+                                         --volume "/media/filecloud/data/Mikescher/files/External/Sync:/media/filecloud/data/Mikescher/files/External/Sync:ro" \
+                                         --volume "/var/log/custom_web:/var/log/custom_web" \
+                                         || exit 1
