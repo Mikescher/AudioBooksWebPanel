@@ -298,6 +298,7 @@ body {
 .th_length { width: 180px; }
 .th_size   { width:  80px; }
 .th_fcount { width:  90px; }
+.th_abridged { width: 80px; }
 
 @media(max-width:1300px)
 {
@@ -328,3 +329,9 @@ body {
 
 #maintab th a { color: black; text-decoration: none; }
 #maintab th i { margin-left: 0.35em; font-size: 0.9em; }
+
+.td_abridged { text-align: center; }
+.abr_short { color: #C62828; }
+.abr_full  { color: #2E7D32; }
+.row_entry:hover .abr_short { color: #FF8A80; }
+.row_entry:hover .abr_full  { color: #B9F6CA; }

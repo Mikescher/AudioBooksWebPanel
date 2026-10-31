@@ -114,6 +114,7 @@ function processData(data)
 			'audiolength': Number(book['audiolength']),
 			'filesize': Number(book['filesize']),
 			'filecount': Number(book['filecount']),
+			'abridgement': book['abridgement'],
 			'bookcount': 1,
 			'seriesindex': null,
 		};
@@ -220,6 +221,7 @@ function getTableHTML(db)
 	str += '<th class="th_length"><a href="#" onclick="rotateOrder(\'audiolength\')">Length'+ofas3+'</a></th>';
 	str += '<th class="th_size"  ><a href="#" onclick="rotateOrder(\'filesize\')">Size'+ofas4+'</a></th>';
 	str += '<th class="th_fcount"><a href="#" onclick="rotateOrder(\'filecount\')">File count'+ofas5+'</a></th>';
+	str += '<th class="th_abridged">Gek&uuml;rzt</th>';
 	str += '</tr>';
 	str += '</thead>';
 
@@ -236,6 +238,7 @@ function getTableHTML(db)
 		str += '<td class="td_length" title="'+author.audiolength+' seconds">' + formatLength(author.audiolength) + '</td>';
 		str += '<td class="td_size"   title="'+author.filesize+' bytes">' + formatSize(author.filesize) + '</td>';
 		str += '<td class="td_fcount">' + author.filecount + '</td>';
+		str += '<td class="td_abridged"></td>';
 		str += '</tr>';
 
 		for (const child of author.children)
@@ -250,6 +253,7 @@ function getTableHTML(db)
 				str += '<td class="td_length" title="'+book.audiolength+' seconds">' + formatLength(book.audiolength) + '</td>';
 				str += '<td class="td_size"   title="'+book.filesize+' bytes">' + formatSize(book.filesize) + '</td>';
 				str += '<td class="td_fcount">' + book.filecount + '</td>';
+				str += '<td class="td_abridged">' + formatAbridgement(book.abridgement) + '</td>';
 				str += '</tr>';
 			}
 			else if (child.otype === 'series')
@@ -263,6 +267,7 @@ function getTableHTML(db)
 				str += '<td class="td_length" title="'+series.audiolength+' seconds">' + formatLength(series.audiolength) + '</td>';
 				str += '<td class="td_size"   title="'+series.filesize+' bytes">' + formatSize(series.filesize) + '</td>';
 				str += '<td class="td_fcount">' + series.filecount + '</td>';
+				str += '<td class="td_abridged"></td>';
 				str += '</tr>';
 
 				for (const sbook of series.books)
@@ -278,6 +283,7 @@ function getTableHTML(db)
 					str += '<td class="td_length" title="'+sbook.audiolength+' seconds">' + formatLength(sbook.audiolength) + '</td>';
 					str += '<td class="td_size"   title="'+sbook.filesize+' bytes">' + formatSize(sbook.filesize) + '</td>';
 					str += '<td class="td_fcount">' + sbook.filecount + '</td>';
+					str += '<td class="td_abridged">' + formatAbridgement(sbook.abridgement) + '</td>';
 					str += '</tr>';
 				}
 			}
@@ -474,6 +480,12 @@ function formatLength(secs) {
 	}
 
 	return res;
+}
+
+function formatAbridgement(abridgement) {
+	if (abridgement === 'SHORT') return '<i class="fas fa-cut abr_short" title="Gek&uuml;rzt"></i>';
+	if (abridgement === 'FULL')  return '<i class="fas fa-check abr_full" title="Ungek&uuml;rzt"></i>';
+	return '';
 }
 
 function formatSize(bytes) {
